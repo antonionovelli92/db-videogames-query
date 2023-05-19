@@ -138,11 +138,15 @@ JOIN videogames ON tournaments.videogame_id = videogames.id
 WHERE YEAR(tournaments.date) = 2018 AND videogames.is_game_of_the_year = 1; **********************************************
 
 9- Selezionare i giocatori che hanno giocato al gioco più atteso del 2018 in un torneo del 2019 (3306)
-9-SELECT DISTINCT players.* FROM players
+9-SELECT DISTINCT players.*
+FROM players
 JOIN player_tournament ON players.id = player_tournament.player_id
 JOIN tournaments ON player_tournament.tournament_id = tournaments.id
-JOIN videogames ON tournaments.videogame_id = videogames.id
-WHERE YEAR(tournaments.date) = 2019 AND videogames.is_most_anticipated = 1 AND YEAR(videogames.release_date) = 2018;***************************************
+JOIN tournament_videogame ON tournaments.id = tournament_videogame.tournament_id
+JOIN videogames ON tournament_videogame.videogame_id = videogames.id
+WHERE videogames.release_date = (SELECT MAX(videogames.release_date) FROM videogames WHERE YEAR(videogames.release_date) = 2018)
+  AND YEAR(tournaments.year) = 2019;
+***************************************
 
 
 
@@ -152,7 +156,7 @@ WHERE YEAR(tournaments.date) = 2019 AND videogames.is_most_anticipated = 1 AND Y
 10-SELECT software_houses.*, videogames.*
 FROM software_houses
 JOIN videogames ON software_houses.id = videogames.software_house_id
-WHERE videogames.id = (SELECT MIN(id) FROM videogames);********************************
+WHERE videogames.id = (SELECT MIN(id) FROM videogames); (risultato diverso)
 
 11- Selezionare i dati del videogame (id, name, release_date, totale recensioni) con più recensioni (videogame id : potrebbe uscire 449 o 398, sono entrambi a 20)
 11-SELECT id, name, release_date, (SELECT COUNT(*) FROM reviews WHERE videogame_id = videogames.id) AS total_reviews
@@ -171,12 +175,14 @@ LIMIT 1;***************************************
 
 
 13- Selezionare le categorie dei videogame i quali hanno una media recensioni inferiore a 1.5 (10)
-13-SELECT DISTINCT categories.id
+13-SELECT categories.name, AVG(reviews.rating) AS average_rating
 FROM categories
 JOIN category_videogame ON categories.id = category_videogame.category_id
-JOIN reviews ON category_videogame.videogame_id = reviews.videogame_id
+JOIN videogames ON category_videogame.videogame_id = videogames.id
+LEFT JOIN reviews ON videogames.id = reviews.videogame_id
 GROUP BY categories.id
-HAVING AVG(reviews.rating) < 1.5; *****************************************
+HAVING AVG(reviews.rating) < 1.5;
+ *****************************************
 
 
 
