@@ -43,7 +43,11 @@ WHERE country ='united states';
 
 
 10- Selezionare gli id dei videogame che hanno ricevuto almeno una recensione da stelle, mostrandoli una sola volta (443)
-10-SELECT DISTINCT videogame_id  FROM reviews WHERE rating ;**************************
+10-SELECT DISTINCT videogames.id
+FROM videogames
+JOIN reviews ON videogames.id = reviews.videogame_id
+WHERE reviews.rating = 5;
+
 
 
 
