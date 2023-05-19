@@ -91,10 +91,12 @@ JOIN reviews ON players.id = reviews.player_id;
 
 
 2- Sezionare tutti i videogame dei tornei tenuti nel 2016, mostrandoli una sola volta (226)
-2-SELECT DISTINCT videogames.* FROM videogames
-JOIN tournament_videogame ON videogames.id = tournament_videogame.videogame_id
-JOIN tournaments ON tournament_videogame.tournament_id = tournaments.id
-WHERE YEAR(tournaments.date) = 2016; ***************************************************
+2-SELECT DISTINCT v.*
+FROM videogames v
+JOIN tournament_videogame tv ON v.id = tv.videogame_id 
+JOIN tournaments t ON tv.tournament_id = t.id
+WHERE t.`year`= 2016;
+
 
 
 
